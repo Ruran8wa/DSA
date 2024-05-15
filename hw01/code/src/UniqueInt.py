@@ -1,3 +1,5 @@
+import os
+
 def process_file(input_file_path, output_file_path):
     seen = [False] * 2047
 
@@ -20,4 +22,9 @@ def process_file(input_file_path, output_file_path):
 
 
 if __name__ == "__main__":
-    process_file("../../sample_inputs/sample_01.txt" , "..\..\sample_results\sample_01.txt_result.txt")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    input_file_path = os.path.join(current_dir, "..", "..", "sample_inputs", "sample_01.txt")
+    output_file_path = os.path.join(current_dir, "..", "..", "sample_results", "sample_01.txt_result.txt")
+    
+    process_file(input_file_path, output_file_path)
