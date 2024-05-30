@@ -9,25 +9,29 @@ class SparseMatrix:
             self.loadFromFile(matrixFilePath)
     
     def loadFromFile(self, matrixFilePath):
-        print(f"Loading matrix from file: {matrixFilePath}")  # Debug print
+        print(f"Loading matrix from file: {matrixFilePath}") 
         with open(matrixFilePath, 'r') as file:
             lines = file.readlines()
-            self.numRows = int(lines[0].split('=')[1].strip())
-            self.numCols = int(lines[1].split('=')[1].strip())
+            try:
+                self.numRows = int(lines[0].split('=')[1].strip())
+                self.numCols = int(lines[1].split('=')[1].strip())
+            except (IndexError, ValueError) as e:
+                raise ValueError("Input file has wrong format: invalid rows/cols definition")
+
             for line in lines[2:]:
                 if line.strip():
                     if not line.startswith('(') or not line.endswith(')'):
-                        raise ValueError("Input file has wrong format")
+                        raise ValueError(f"Input file has wrong format: {line.strip()}")
                     parts = line[1:-1].split(',')
                     if len(parts) != 3:
-                        raise ValueError("Input file has wrong format")
+                        raise ValueError(f"Input file has wrong format: {line.strip()}")
                     try:
                         row = int(parts[0].strip())
                         col = int(parts[1].strip())
                         value = int(parts[2].strip())
                         self.setElement(row, col, value)
                     except ValueError:
-                        raise ValueError("Input file has wrong format")
+                        raise ValueError(f"Input file has wrong format: {line.strip()}")
 
     def getElement(self, currRow, currCol):
         return self.elements.get((currRow, currCol), 0)
@@ -80,8 +84,8 @@ def main():
     matrix1_path = os.path.join(base_input_path, "easy_sample_01_1.txt")
     matrix2_path = os.path.join(base_input_path, "easy_sample_01_2.txt")
     
-    print(f"Matrix 1 path: {matrix1_path}")  # Debug print
-    print(f"Matrix 2 path: {matrix2_path}")  # Debug print
+    print(f"Matrix 1 path: {matrix1_path}") 
+    print(f"Matrix 2 path: {matrix2_path}") 
     
     if not os.path.isfile(matrix1_path):
         print(f"File not found: {matrix1_path}")
@@ -90,8 +94,12 @@ def main():
         print(f"File not found: {matrix2_path}")
         return
 
-    matrix1 = SparseMatrix(matrix1_path)
-    matrix2 = SparseMatrix(matrix2_path)
+    try:
+        matrix1 = SparseMatrix(matrix1_path)
+        matrix2 = SparseMatrix(matrix2_path)
+    except ValueError as e:
+        print(e)
+        return
     
     operation = input("Enter the operation to perform (add, subtract, multiply): ").strip().lower()
     
